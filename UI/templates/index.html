@@ -1,31 +1,30 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Weather Dashboard</title>
+    <title>Weather Dashboard of 2022</title>
 </head>
 <body>
-    <h1>Weather Dashboard</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>Latitude</th>
-                <th>Longitude</th>
-                <th>Time</th>
-                <th>Rainfall</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for i in range(lats|length) %}
-                <tr>
-                    <td>{{ lats[i] }}</td>
-                    <td>{{ longs[i] }}</td>
-                    <td>{{ time[i] }}</td>
-                    <td>{{ rainfall[i] }}</td>
-                </tr>
+    <h1>Weather Dashboard of 2022</h1>
+    <form method="POST">
+        <label for="day">Select Day:</label>
+        <input type="date" name="day" id="day" value="{{ selected_day }}" min="2022-01-01" max="2022-12-31">
+        <br>
+        <label for="city">Select City:</label>
+        <select name="city" id="city">
+            {% for city, coords in city_coordinates.items() %}
+                <option value="{{ city }}" {% if city == selected_city %}selected{% endif %}>{{ city }}</option>
             {% endfor %}
-        </tbody>
-    </table>
+        </select>
+        <br>
+        <input type="submit" value="Submit">
+    </form>
+    <br>
+    <p>Selected Day: {{ selected_day }}</p>
+    <p>Selected City: {{ selected_city }}</p>
+    <p>Average Rainfall: {{ avg_rainfall }} mm</p>
+    
+    <!-- Embed the image -->
+    <img id="weatherImage" src="{{ image_url }}" alt="Weather Image">
 </body>
 </html>
