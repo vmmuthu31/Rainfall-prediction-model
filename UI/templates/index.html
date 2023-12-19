@@ -1,0 +1,31 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Weather Dashboard</title>
+</head>
+<body>
+    <h1>Weather Dashboard</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Latitude</th>
+                <th>Longitude</th>
+                <th>Time</th>
+                <th>Rainfall</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for i in range(lats|length) %}
+                <tr>
+                    <td>{{ lats[i] }}</td>
+                    <td>{{ longs[i] }}</td>
+                    <td>{{ time[i] }}</td>
+                    <td>{{ rainfall[i] }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
