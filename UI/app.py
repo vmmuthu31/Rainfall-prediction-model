@@ -2,8 +2,10 @@ from flask import Flask, render_template, request, send_from_directory
 import numpy as np
 from netCDF4 import Dataset
 from geopy.geocoders import Nominatim
+from geopy.exc import GeocoderTimedOut
 import os
 from datetime import datetime
+import json
 
 app = Flask(__name__)
 
@@ -18,11 +20,46 @@ tave = data.variables['RAINFALL'][:]
 geolocator = Nominatim(user_agent="city_coordinates")
 indian_cities = ["Pune", "Mumbai", "Delhi", "Bangalore", "Chennai", "Kolkata"]
 
-city_coordinates = {}
+cache_file = 'city_coordinates_cache.json'
+if os.path.exists(cache_file):
+    with open(cache_file, 'r') as f:
+        city_coordinates = json.load(f)
+else:
+    city_coordinates = {}
+
 for city in indian_cities:
-    location = geolocator.geocode(city + ", India")
-    if location:
-        city_coordinates[city] = (location.latitude, location.longitude)
+    if city not in city_coordinates:
+        try:
+            location = geolocator.geocode(city + ", India")
+            if location:
+                city_coordinates[city] = (location.latitude, location.longitude)
+        except GeocoderTimedOut:
+            print(f"Geocoding request timed out for: {city}")
+
+# Save updated coordinates to cache
+with open(cache_file, 'w') as f:
+    json.dump(city_coordinates, f)
+
+cache_file = 'city_coordinates_cache.json'
+if os.path.exists(cache_file):
+    with open(cache_file, 'r') as f:
+        city_coordinates = json.load(f)
+else:
+    city_coordinates = {}
+
+for city in indian_cities:
+    if city not in city_coordinates:
+        try:
+            location = geolocator.geocode(city + ", India")
+            if location:
+                city_coordinates[city] = (location.latitude, location.longitude)
+        except GeocoderTimedOut:
+            print(f"Geocoding request timed out for: {city}")
+
+# Save updated coordinates to cache
+with open(cache_file, 'w') as f:
+    json.dump(city_coordinates, f)
+
 
 # Define the directory containing existing images
 image_directory = 'output_images'
